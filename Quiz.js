@@ -1,6 +1,8 @@
 
 
-
+//making a variable to store the quiz data, which is-- 
+// an array of objects. Each object represents a-- 
+// question, the options, and the correct answer.
 const quizData = [
   {
     question: "1. Who created HTML?",
@@ -48,74 +50,75 @@ const quizData = [
     correctAnswer: ["Google Chrome", "Safari"]
   }
 ];
-
+// making variables to store the quiz container, submit button, reset button, and--
+//  result container elements from the HTML document.
 const quizContainer = document.getElementById("quiz-questions");
 const submitButton = document.getElementById("submit");
 const resetButton = document.getElementById("reset");
 const resultContainer = document.getElementById("result");
-const passingScore = Math.ceil(quizData.length * 0.6);
-
+const passingScore = Math.ceil(quizData.length * 0.5); // Set passing score to 50% of total questions
+// a function to compare two arrays for equality, used-
+// for checking checkbox answers where order doesn't matter.
 function arraysEqual(a, b) {
-  return a.length === b.length && a.every(value => b.includes(value));
+  return a.length === b.length && a.every(value => b.includes(value)); // Check if every element in 'a' is also in 'b' and they have the same length
 }
-
+// a function to get the question type if that is text box or multiple choice, defaulting to "radio" if not specified.
 function getQuestionType(questionData) {
   return questionData.type || "radio";
 }
-
+// a function to check if a question has been answered, which varies based on the question type.
 function isQuestionAnswered(questionData, index) {
-  if (getQuestionType(questionData) === "text") {
-    const input = document.querySelector(`input[name="question${index}"]`);
-    return input && input.value.trim() !== "";
+  if (getQuestionType(questionData) === "text") { // For text questions, check if the input is not empty
+    const input = document.querySelector(`input[name="question${index}"]`); // Select the text input for the current question
+    return input && input.value.trim() !== ""; // Return true if the input exists and is not just whitespace
   }
-  return document.querySelector(`input[name="question${index}"]:checked`) !== null;
+  return document.querySelector(`input[name="question${index}"]:checked`) !== null; // For radio and checkbox questions, check if at least one option is selected
 }
-
+// a function to check if all questions have been answered, which is used to enable or disable the submit button.
 function areAllQuestionsAnswered() {
-  return quizData.every((questionData, index) =>
-    isQuestionAnswered(questionData, index)
+  return quizData.every((questionData, index) => 
+    isQuestionAnswered(questionData, index)// 
   );
 }
-
+// a function to update the state of the submit button based on whether all questions have been answered, and to clear previous results when the user starts changing answers again.
 function updateSubmitState() {
-  submitButton.disabled = !areAllQuestionsAnswered();
+  submitButton.disabled = !areAllQuestionsAnswered(); 
   if (!submitButton.disabled) {
     resultContainer.innerHTML = "";
   }
 }
-
+// a function to get the user's answer for a given question, which handles different input types (text, checkbox, radio).
 function getUserAnswer(questionData, index) {
   const questionType = getQuestionType(questionData);
-
   if (questionType === "text") {
     const input = document.querySelector(`input[name="question${index}"]`);
     return input ? input.value.trim() : "";
   }
-
+// For checkbox questions, gather all checked inputs and return their values as an array.
   if (questionType === "checkbox") {
     return Array.from(
       document.querySelectorAll(`input[name="question${index}"]:checked`)
     ).map((input) => input.value);
   }
-
+// For radio questions, return the value of the selected option, or an empty string if none are selected.
   const selected = document.querySelector(`input[name="question${index}"]:checked`);
   return selected ? selected.value : "";
 }
-
+// a function to check if the user's answer is correct, which also handles different question types appropriately.
 function isCorrectAnswer(questionData, userAnswer) {
   const questionType = getQuestionType(questionData);
-
+// For text questions, compare the user's answer to the correct answer in a case-insensitive manner. For checkbox questions, compare the sorted arrays of selected options and correct answers. For radio questions, compare the user's answer directly to the correct answer.
   if (questionType === "text") {
     return userAnswer.toLowerCase() === questionData.correctAnswer.toLowerCase();
   }
-
+// For checkbox questions, we need to check if the user's selected options match the correct answers regardless of order. We can do this by sorting both arrays and then comparing them for equality.
   if (questionType === "checkbox") {
-    return arraysEqual([...userAnswer].sort(), [...questionData.correctAnswer].sort());
+    return arraysEqual([...userAnswer].sort(), [...questionData.correctAnswer].sort()); // Use the arraysEqual function to compare the sorted arrays of user answers and correct answers
   }
 
-  return userAnswer === questionData.correctAnswer;
+  return userAnswer === questionData.correctAnswer; // For radio questions, a simple equality check is sufficient.
 }
-
+// a function to format the user's answer for display in the results, which handles both text and array answers.
 function formatAnswer(answer) {
   if (Array.isArray(answer)) {
     return answer.length ? answer.join(", ") : "No answer selected";
@@ -123,16 +126,16 @@ function formatAnswer(answer) {
 
   return answer || "No answer provided";
 }
-
+// a function to load the quiz questions into the quiz container, which dynamically creates the necessary input elements based on the question type and sets up event listeners to track changes and update the submit button state.
 function loadQuiz() {
   quizContainer.innerHTML = "";
 
   quizData.forEach((questionData, index) => {
     const questionElement = document.createElement("div");
     questionElement.classList.add("question");
-
+// Determine the question type and generate the appropriate input elements for text, checkbox, or radio questions.
     const questionType = getQuestionType(questionData);
-    let inputHtml;
+    let inputHtml; // For text questions, create a single text input. For checkbox questions, create a checkbox for each option. For radio questions, create a radio button for each option.
     if (questionType === "text") {
       inputHtml = `<input type="text" name="question${index}" autocomplete="off">`;
     } else if (questionType === "checkbox") {
@@ -150,7 +153,7 @@ function loadQuiz() {
         </label>
       `).join("");
     }
-
+// Set the inner HTML of the question element to include the question prompt and the generated input elements, then append it to the quiz container.
     questionElement.innerHTML = `
       <p>${questionData.question}</p>
       ${inputHtml}
@@ -164,7 +167,7 @@ function loadQuiz() {
 
   updateSubmitState();
 }
-
+// a function to calculate the user's score by comparing their answers to the correct answers for each question, and to generate a detailed results summary that includes whether each question was answered correctly, the user's answer, and the correct answer.
 function calculateScore() {
   let score = 0;
   const questionResults = quizData.map((questionData, index) => {
@@ -185,13 +188,12 @@ function calculateScore() {
 
   return { score, questionResults };
 }
-
+// a function to render the results summary after the user submits their answers, which displays the total score, whether they passed or failed, and a detailed breakdown of each question's results.
 function renderResults(score, questionResults) {
   const passed = score >= passingScore;
   const resultClass = passed ? "pass" : "fail";
   const resultText = passed ? "Pass" : "Fail";
 
-  // Build a detailed score summary so the user can review each answer immediately.
   resultContainer.innerHTML = `
     <div class="results-summary ${resultClass}">
       <h2>${resultText}</h2>
@@ -210,9 +212,8 @@ function renderResults(score, questionResults) {
     </div>
   `;
 }
-
+//a function to reset the quiz, clearing the results and reloading the quiz.
 function resetQuiz() {
-  // Rebuild the quiz so all previous selections, typed answers, and result messages are cleared.
   resultContainer.innerHTML = "";
   loadQuiz();
 }
@@ -228,5 +229,6 @@ submitButton.addEventListener("click", () => {
 });
 
 resetButton.addEventListener("click", resetQuiz);
+// Loads the quiz when the page is first loaded, which initializes the quiz interface and sets up the necessary event listeners for user interaction.
 
 loadQuiz();
