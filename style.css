@@ -283,5 +283,8 @@ and adds text color for better readability.*/
         margin: 5px 0;
     }
 }
+@media screen and (max-width: 480px)
+
+
 /*The @media screen css styles the website for smaller screens like phones or tablets.
 It shrinks the font size,navigation for better readability*/ 
