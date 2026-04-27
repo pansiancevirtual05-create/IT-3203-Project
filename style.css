@@ -267,8 +267,32 @@ and adds text color for better readability.*/
     margin: 6px 0;
 }
 
-
-
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin: 20px auto;
+}
+/* styles the images 
+*/
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color:#fff;
+    border-radius: 8px;
+}
+/*Table styling for readability and aesthetics.
+ */
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+th{
+    background-color: #f2f2f2;
+}
 
 
 @media screen and (max-width: 768px) {
@@ -283,8 +307,19 @@ and adds text color for better readability.*/
         margin: 5px 0;
     }
 }
-@media screen and (max-width: 480px)
-
-
+@media screen and (max-width: 480px) {
+    body {
+        font-size: 10px;
+    }
+    main{
+        padding: 10px;
+    }
+  h1 {
+        font-size: 20px;
+  }
+table{
+    font-size: 10px;
+}
+}
 /*The @media screen css styles the website for smaller screens like phones or tablets.
 It shrinks the font size,navigation for better readability*/ 
