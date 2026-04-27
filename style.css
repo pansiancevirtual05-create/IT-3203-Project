@@ -268,11 +268,11 @@ and adds text color for better readability.*/
 }
 
 img {
-    max-width: 100%;
+    max-width: 40%; 
     height: auto;
     border-radius: 8px;
-    display: block;
-    margin: 20px auto;
+    float: right; 
+    margin: 5px 0 15px 20px;
 }
 /* styles the images 
 */
